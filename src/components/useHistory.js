@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import _ from "lodash";
 
@@ -10,64 +10,8 @@ const initialState = {
   currentItemNo: -1
 };
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "prev":
-      return {
-        ...state,
-        currentItemNo: state.currentItemNo - 1
-      };
-
-    case "next":
-      return {
-        ...state,
-        currentItemNo: state.currentItemNo + 1
-      };
-
-    case "add":
-      const items = _.clone(state.items);
-      items.push(action.payload);
-      return {
-        ...state,
-        items,
-        currentItemNo: items.length - 1
-      };
-
-    case "goto":
-      return {
-        ...state,
-        currentItemNo: action.payload
-      };
-
-    case "load":
-      return {
-        ...state,
-        loading: true,
-        currentItemDetail: null,
-        error: null
-      };
-
-    case "success":
-      return {
-        ...state,
-        loading: false,
-        currentItemDetail: action.payload
-      };
-
-    case "error":
-      return {
-        ...state,
-        loading: false,
-        error: action.payload
-      };
-
-    default:
-      throw new Error("Missing action type");
-  }
-}
-
 export default function useHistory(url, data) {
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, setState] = useState({
     ...initialState,
     ...data
   });
@@ -75,50 +19,56 @@ export default function useHistory(url, data) {
 
   function prev() {
     if (currentItemNo > 0) {
-      dispatch({ type: "prev" });
+      setState({ ...state, currentItemNo: state.currentItemNo - 1 });
     }
   }
 
   function next() {
     if (currentItemNo < items.length - 1) {
-      dispatch({ type: "next" });
+      setState({ ...state, currentItemNo: state.currentItemNo + 1 });
     }
   }
 
   function add(data) {
-    dispatch({ type: "add", payload: data });
+    const items = _.clone(state.items);
+    items.push(data);
+    setState({ ...state, items, currentItemNo: items.length - 1 });
   }
 
   function goto(data) {
-    dispatch({ type: "goto", payload: data });
+    setState({ ...state, currentItemNo: data });
   }
 
   function setError(data) {
-    dispatch({ type: "error", payload: data });
+    setState({ ...state, loading: false, error: data });
+  }
+
+  function setLoad() {
+    setState({ ...state, loading: true, currentItemDetail: null, error: null });
+  }
+
+  function setSuccess(data) {
+    setState({ ...state, loading: false, currentItemDetail: data });
   }
 
   useEffect(
     function() {
       if (items.length > 0) {
-        dispatch({ type: "load" });
+        setLoad();
         axios
           .get(url + encodeURIComponent(state.items[state.currentItemNo]))
           .then(function(resp) {
             setTimeout(function() {
               const { name, avatar_url, html_url } = resp.data;
-              dispatch({
-                type: "success",
-                payload: {
-                  name,
-                  profileImage: avatar_url,
-                  profileUrl: html_url
-                }
+              setSuccess({
+                name,
+                profileImage: avatar_url,
+                profileUrl: html_url
               });
             }, 2000);
           })
           .catch(function(err) {
-            const error = err.data;
-            dispatch({ type: "error", payload: { error } });
+            setError(err.data);
           });
       }
     },
