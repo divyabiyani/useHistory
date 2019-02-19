@@ -104,11 +104,17 @@ export default function useHistory(url, data) {
         axios
           .get(url + encodeURIComponent(state.items[state.currentItemNo]))
           .then(function(resp) {
-            const { name, avatar_url, html_url } = resp.data;
-            dispatch({
-              type: "success",
-              payload: { name, profileImage: avatar_url, profileUrl: html_url }
-            });
+            setTimeout(function() {
+              const { name, avatar_url, html_url } = resp.data;
+              dispatch({
+                type: "success",
+                payload: {
+                  name,
+                  profileImage: avatar_url,
+                  profileUrl: html_url
+                }
+              });
+            }, 2000);
           })
           .catch(function(err) {
             const error = err.data;

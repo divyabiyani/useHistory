@@ -16,6 +16,8 @@ function App() {
     setError
   } = useHistory("https://api.github.com/users/", {});
 
+  console.log(items);
+
   useEffect(
     function() {
       if (currentItemNo >= 0) setName(items[currentItemNo]);
@@ -37,45 +39,45 @@ function App() {
   return (
     <div className="App o-flex-layout">
       <div className="u-half">
-        {loading ? (
-          <Loader />
-        ) : (
-          [
-            <form onSubmit={onClickHandler}>
-              <label>Enter Username: </label>
-              <input type="text" onChange={onChangeHandler} value={name} />
-              <button className={name != "" ? "" : "disabled"} type="submit">
-                Search
-              </button>
-              <label
-                onClick={() => prev()}
-                className={currentItemNo <= 0 ? "btn disabled" : "btn"}
-              >
-                {"<"}
-              </label>
-              <label
-                onClick={() => next()}
-                className={
-                  currentItemNo >= items.length - 1 ? "btn disabled" : "btn"
-                }
-              >
-                {">"}
-              </label>
-            </form>,
-            currentItemDetail && (
-              <div>
-                <h1>{currentItemDetail.name}</h1>
-                <a href={currentItemDetail.profileUrl}>
-                  {currentItemDetail.profileUrl}
-                </a>
-                <img src={currentItemDetail.profileImage} target="_blank" />
-              </div>
-            ),
-            errorMsg && (
-              <div className="danger">Github Profile {name} not found.</div>
-            )
-          ]
-        )}
+        <form onSubmit={onClickHandler}>
+          <label>Enter Username: </label>
+          <input type="text" onChange={onChangeHandler} value={name} />
+          <button className={name != "" ? "" : "disabled"} type="submit">
+            Search
+          </button>
+          <label
+            onClick={() => prev()}
+            className={currentItemNo <= 0 ? "btn disabled" : "btn"}
+          >
+            {"<"}
+          </label>
+          <label
+            onClick={() => next()}
+            className={
+              currentItemNo >= items.length - 1 ? "btn disabled" : "btn"
+            }
+          >
+            {">"}
+          </label>
+          {loading ? (
+            <Loader />
+          ) : (
+            [
+              currentItemDetail && (
+                <div>
+                  <h1>{currentItemDetail.name}</h1>
+                  <a href={currentItemDetail.profileUrl}>
+                    {currentItemDetail.profileUrl}
+                  </a>
+                  <img src={currentItemDetail.profileImage} target="_blank" />
+                </div>
+              ),
+              errorMsg && (
+                <div className="danger">Github Profile {name} not found.</div>
+              )
+            ]
+          )}
+        </form>
       </div>
       <div className="u-half">
         List of already search usernames:
