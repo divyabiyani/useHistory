@@ -1,2 +1,0 @@
-# useHistory
-Created with CodeSandbox

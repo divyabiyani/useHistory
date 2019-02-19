@@ -1,0 +1,32 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  width: 100%;
+  display: flex;
+}
+
+.u-half {
+  width: 50%;
+  padding: 20px;
+}
+
+.user-name {
+  display: block;
+  cursor: pointer;
+  color: blue;
+}
+
+.danger {
+  color: #ff0000;
+}
+
+.disabled {
+  color: #c7c0c0;
+  cursor: not-allowed;
+}
+
+.btn {
+  border: 1px solid;
+  padding: 0px 10px 0px;
+  margin: 0px 10px 0px;
+}
